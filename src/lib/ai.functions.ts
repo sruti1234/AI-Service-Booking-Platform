@@ -14,11 +14,11 @@ const Input = z.object({
 export const generateProviderSummary = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => Input.parse(input))
   .handler(async ({ data }) => {
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) throw new Error("Missing OPENAI_API_KEY");
 
-    const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
-    const gateway = createLovableAiGatewayProvider(key);
+    const { createAppAiProvider } = await import("./ai-gateway.server");
+    const openai = createAppAiProvider();
 
     const prompt = `You write short, customer-friendly summaries for a service-booking app.
 
@@ -29,19 +29,22 @@ Provider:
 - Experience: ${data.experience} years
 - Average rating: ${data.rating} / 5 (${data.reviews} reviews)
 
-Write 2 sentences (max 55 words total). Highlight strengths, ideal use cases, and trust signals. No emojis. No markdown. No bullet points.`;
+Write exactly 2 sentences (max 55 words total). Highlight strengths, ideal use cases, and trust signals. No emojis. No markdown. No bullet points.`;
 
     try {
       const { text } = await generateText({
-        model: gateway("google/gemini-3-flash-preview"),
+        model: openai("gpt-4o-mini"),
         prompt,
       });
+
       return { summary: text.trim() };
     } catch (err: unknown) {
       const e = err as { statusCode?: number; status?: number; message?: string };
       const status = e.statusCode ?? e.status;
-      if (status === 429) throw new Error("AI rate limit reached. Please retry in a moment.");
-      if (status === 402) throw new Error("AI credits exhausted for this workspace.");
+
+      if (status === 429) throw new Error("OpenAI rate limit reached. Please retry in a moment.");
+      if (status === 401) throw new Error("Invalid OpenAI API key.");
+      if (status === 402) throw new Error("OpenAI billing or quota issue.");
       throw new Error(e.message ?? "AI request failed");
     }
   });
