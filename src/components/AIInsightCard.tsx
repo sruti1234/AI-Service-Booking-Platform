@@ -42,7 +42,7 @@ export function AIInsightCard({ provider }: { provider: Provider }) {
           </div>
           <div>
             <div className="font-semibold text-sm">AI Provider Insight</div>
-            <div className="text-xs text-muted-foreground">Powered by Lovable AI</div>
+            <div className="text-xs text-muted-foreground">Powered by Open AI</div>
           </div>
         </div>
 

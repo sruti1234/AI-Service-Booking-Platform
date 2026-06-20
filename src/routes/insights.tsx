@@ -24,9 +24,10 @@ function Insights() {
         <div className="absolute -top-12 -right-12 size-48 rounded-full bg-primary/15 blur-3xl" />
         <div className="relative max-w-2xl">
           <div className="inline-flex items-center gap-2 text-xs font-medium text-primary mb-3">
-            <Sparkles className="size-3.5" /> POWERED BY LOVABLE AI + KNN
+            <Sparkles className="size-3.5" /> POWERED BY OPENAI + KNN
           </div>
           <h2 className="text-2xl font-display font-bold">
+            
             Smart insights across our entire network of providers
           </h2>
           <p className="text-muted-foreground mt-2">

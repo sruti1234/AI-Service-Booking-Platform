@@ -47,4 +47,4 @@ Write exactly 2 sentences (max 55 words total). Highlight strengths, ideal use c
       if (status === 402) throw new Error("OpenAI billing or quota issue.");
       throw new Error(e.message ?? "AI request failed");
     }
-  });
+  }); 
