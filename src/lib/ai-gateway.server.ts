@@ -1,13 +1,13 @@
-import { createOpenAI } from "@ai-sdk/openai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
 export function createAppAiProvider() {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    throw new Error("Missing OPENAI_API_KEY");
+    throw new Error("Missing GEMINI_API_KEY");
   }
 
-  return createOpenAI({
+  return createGoogleGenerativeAI({
     apiKey,
   });
 }

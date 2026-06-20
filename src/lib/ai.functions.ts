@@ -14,11 +14,11 @@ const Input = z.object({
 export const generateProviderSummary = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => Input.parse(input))
   .handler(async ({ data }) => {
-    const key = process.env.OPENAI_API_KEY;
-    if (!key) throw new Error("Missing OPENAI_API_KEY");
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) throw new Error("Missing GEMINI_API_KEY");
 
     const { createAppAiProvider } = await import("./ai-gateway.server");
-    const openai = createAppAiProvider();
+    const gemini = createAppAiProvider();
 
     const prompt = `You write short, customer-friendly summaries for a service-booking app.
 
@@ -33,18 +33,13 @@ Write exactly 2 sentences (max 55 words total). Highlight strengths, ideal use c
 
     try {
       const { text } = await generateText({
-        model: openai("gpt-4o-mini"),
+        model: gemini("gemini-2.5-flash"),
         prompt,
       });
 
       return { summary: text.trim() };
     } catch (err: unknown) {
       const e = err as { statusCode?: number; status?: number; message?: string };
-      const status = e.statusCode ?? e.status;
-
-      if (status === 429) throw new Error("OpenAI rate limit reached. Please retry in a moment.");
-      if (status === 401) throw new Error("Invalid OpenAI API key.");
-      if (status === 402) throw new Error("OpenAI billing or quota issue.");
       throw new Error(e.message ?? "AI request failed");
     }
-  }); 
+  });
